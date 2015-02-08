@@ -1,7 +1,9 @@
 g2munge
+----------------------------------------------
+
 Copyright(c) 2015 Kevin Arthur Schiff Croker
 GPL v3
-----------------------------------------------
+
 The following is a small "swiss army knife" for creating, modifying, and querying Gadget-2
 initial condition files written in the native Gadget-2 format.  It only operates in serial
 and so is not appropriate for large data sets.  Its purpose is mainly for debugging technical
