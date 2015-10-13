@@ -43,6 +43,7 @@
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_histogram.h>
 #include <gsl/gsl_rng.h>
@@ -522,7 +523,10 @@ int main(int argc, char **argv)
     --snapA.P;
     sanity = 1;
     
+    // KC 10/13/15
+    // Don't forget to seed, dummy
     entropy = gsl_rng_alloc(gsl_rng_taus);
+    gsl_rng_set(entropy, time(NULL));
 
     for(i = 0; i < snapA.NumPart; ++i) {
 
@@ -530,6 +534,7 @@ int main(int argc, char **argv)
       P->Pos[1] = Rmax * gsl_rng_uniform(entropy);
       P->Pos[2] = Rmax * gsl_rng_uniform(entropy);
 
+      // Note that uniform types can be created with mod = 1, base = desired type 
       if(argc > 6) {
 	P->Type = (rand() % atoi(argv[6])) + atoi(argv[7]);
       }
@@ -541,7 +546,7 @@ int main(int argc, char **argv)
       snapA.head.npart[P->Type]++;
       
       (P++)->Id = sanity++;
-    }    
+    }
     
     //gsl_rng_free(entropy);
 
