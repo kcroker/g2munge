@@ -43,6 +43,7 @@
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
+#include <limits.h>
 #include <time.h>
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_histogram.h>
@@ -169,6 +170,19 @@ void extrema(snapshot *snap, float *eP, float *eV, float *eA) {
       P->Acc[k] > eA[2*k] ? eA[2*k] = P->Acc[k] : (P->Acc[k] < eA[2*k + 1] ? eA[2*k+1] = P->Acc[k] : 0);
     }
   }
+}
+
+double rand01(void) {
+  
+  unsigned long ul;
+  FILE *fp;
+
+  fp = fopen("/dev/urandom", "r");
+  fread(&ul, sizeof(unsigned long), 1, fp);
+  fclose(fp);
+
+  // Normalize by maxint
+  return ((double)ul/ULONG_MAX);
 }
 
 const char *usage = "Usage: %s <snapshot filename | - (stdin)> <command string>\n";
@@ -523,16 +537,11 @@ int main(int argc, char **argv)
     --snapA.P;
     sanity = 1;
     
-    // KC 10/13/15
-    // Don't forget to seed, dummy
-    entropy = gsl_rng_alloc(gsl_rng_taus);
-    gsl_rng_set(entropy, time(NULL));
-
     for(i = 0; i < snapA.NumPart; ++i) {
 
-      P->Pos[0] = Rmax * gsl_rng_uniform(entropy);
-      P->Pos[1] = Rmax * gsl_rng_uniform(entropy);
-      P->Pos[2] = Rmax * gsl_rng_uniform(entropy);
+      P->Pos[0] = Rmax * rand01();
+      P->Pos[1] = Rmax * rand01();
+      P->Pos[2] = Rmax * rand01();
 
       // Note that uniform types can be created with mod = 1, base = desired type 
       if(argc > 6) {
